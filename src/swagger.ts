@@ -11,7 +11,12 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
+        url: "https://ecommerce-api-s8fd.onrender.com",
+        description: "Production",
+      },
+      {
         url: "http://localhost:3000",
+        description: "Development",
       },
     ],
   },
