@@ -29,7 +29,13 @@ app.use("/orders", orderRoutes);
 
 // Test route
 app.get("/", (req, res) => {
-  res.json({ message: "eCommerce API is running" });
+  res.send(`
+    <html>
+      <body style="background-color: #1a1a1a; color: #ffffff; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+        <h1>🛒 eCommerce API is running</h1>
+      </body>
+    </html>
+  `);
 });
 
 // Error handler (must be last)

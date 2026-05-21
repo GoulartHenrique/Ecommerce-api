@@ -1,117 +1,174 @@
-# eCommerce API
+# 🛒 eCommerce API
 
-A backend REST API project built with Express, TypeScript, MongoDB Atlas, Mongoose, and Zod.
+This is a RESTful API I built for an online store, my solo backend project.
 
-## Features
+It handles everything a basic eCommerce backend needs: users, categories, products, and orders. All with validation, data integrity checks, and auto-calculated order totals.
 
-- CRUD operations for:
-  - Categories
-  - Products
-  - Users
-  - Orders
-- Request validation using Zod
-- MongoDB Atlas integration
-- Mongoose schemas and models
-- Layered architecture:
-  - Routes
-  - Controllers
-  - Middlewares
-  - Models
-  - Schemas
-- Centralized error handling
-- Swagger UI documentation
-- Password excluded from all API responses
+🔗 **live Project:** [Swagger UI on Render](https://ecommerce-api-s8fd.onrender.com/api-docs)
 
-## Tech Stack
+---
 
-- Node.js
-- Express
-- TypeScript
-- MongoDB Atlas
-- Mongoose
-- Zod
-- Swagger UI
-- CORS
-- dotenv
+## What it does
 
-## Project Structure
+- **Full CRUD** for Categories, Products, Users, and Orders
+- **Validates everything** with Zod before it touches the database
+- **Checks data integrity** — can't create a product without a real category, can't place an order without a real user
+- **Calculates order totals on the server** — price × quantity for each product, so nobody can fake the price
+- **Never exposes passwords** in any API response
+- **Catches duplicate emails** and returns a clear error
+- **Filters products by category** — just add `?categoryId=` to the URL
+- **Swagger UI** — test every endpoint right in the browser
+- **Deployed on Render** — no localhost needed
+
+---
+
+## Built with
+
+- **TypeScript** + **Express** — the backbone
+- **MongoDB Atlas** + **Mongoose** — cloud database and ODM
+- **Zod** — input validation that actually gives useful error messages
+- **Swagger UI** — so anyone can explore the API without Postman
+- **dotenv** — keeps secrets out of GitHub
+- **ts-node-dev** — hot reload during development
+
+---
+
+## Project structure
 
 ```
 src/
-├── controllers/
+├── app.ts              → Where everything starts
+├── swagger.ts          → Swagger config
 ├── db/
+│   └── index.ts        → Connects to MongoDB Atlas
+├── models/             → How the data looks in the database
+│   ├── User.ts         → name, email, password (unique email)
+│   ├── Category.ts     → name
+│   ├── Product.ts      → name, description, price, categoryId
+│   └── Order.ts        → userId, products[], total (auto-calculated)
+├── schemas/            → Zod schemas that validate incoming data
+├── controllers/        → The actual logic (create, read, update, delete)
+├── routes/             → Maps URLs to controllers + Swagger docs
 ├── middlewares/
-├── models/
-├── routes/
-├── schemas/
-├── types/
-├── swagger.ts
-└── app.ts
+│   ├── validate.ts     → Reusable validation middleware
+│   └── errorHandler.ts → Catches unexpected errors
+└── types/
 ```
 
-## Validation
+---
 
-The project uses Zod for:
+## How to run it locally
 
-- Request body validation
-- Email format validation
-- Password minimum length
-- Positive price enforcement
-- Required field checks
-
-## Business Logic
-
-Examples:
-
-- Check whether category/product/user exists before referencing
-- Prevent duplicate user emails
-- Automatically calculate order total on the server
-- Validate product references inside orders
-- Exclude password from all responses
-
-## Development
+You'll need **Node.js** and a **MongoDB Atlas** account.
 
 ```bash
+git clone https://github.com/GoulartHenrique/Ecommerce-api.git
+cd Ecommerce-api
 npm install
-npm run dev
 ```
 
-## Production
+Create a `.env` file in the root:
 
-```bash
-npm run build
-npm start
-```
-
-## Environment Variables
-
-Create a `.env` file in the project root:
-
-```
+```env
 PORT=3000
 MONGODB_URI=mongodb+srv://YOUR_USER:YOUR_PASSWORD@your-cluster.mongodb.net/ecommerce
 ```
 
-> ⚠️ Never commit your `.env` file to GitHub.
+> ⚠️ This file is in `.gitignore`.
 
-## API Documentation
+Then just:
 
-Once the server is running, open Swagger UI:
-
-```
-http://localhost:3000/api-docs
+```bash
+npm run dev
 ```
 
-## API Endpoints
+Open [http://localhost:3000/api-docs](http://localhost:3000/api-docs) and you're good to go.
 
-**Categories:** `GET /categories` · `POST /categories` · `GET /categories/:id` · `PUT /categories/:id` · `DELETE /categories/:id`
+---
 
-**Users:** `GET /users` · `POST /users` · `GET /users/:id` · `PUT /users/:id` · `DELETE /users/:id`
+## API at a glance
 
-**Products:** `GET /products` · `GET /products?categoryId=` · `POST /products` · `GET /products/:id` · `PUT /products/:id` · `DELETE /products/:id`
+### Categories
 
-**Orders:** `GET /orders` · `POST /orders` · `GET /orders/:id` · `PUT /orders/:id` · `DELETE /orders/:id`
+| Method   | Endpoint          | What it does |
+| -------- | ----------------- | ------------ |
+| `GET`    | `/categories`     | List all     |
+| `GET`    | `/categories/:id` | Get one      |
+| `POST`   | `/categories`     | Create       |
+| `PUT`    | `/categories/:id` | Update       |
+| `DELETE` | `/categories/:id` | Delete       |
 
-## Testing
+### Users
 
-Use Postman or Thunder Client to test all CRUD endpoints.
+| Method   | Endpoint     | What it does            |
+| -------- | ------------ | ----------------------- |
+| `GET`    | `/users`     | List all (no passwords) |
+| `GET`    | `/users/:id` | Get one (no password)   |
+| `POST`   | `/users`     | Create                  |
+| `PUT`    | `/users/:id` | Update                  |
+| `DELETE` | `/users/:id` | Delete                  |
+
+### Products
+
+| Method   | Endpoint                  | What it does                  |
+| -------- | ------------------------- | ----------------------------- |
+| `GET`    | `/products`               | List all                      |
+| `GET`    | `/products?categoryId=ID` | Filter by category            |
+| `GET`    | `/products/:id`           | Get one                       |
+| `POST`   | `/products`               | Create (validates categoryId) |
+| `PUT`    | `/products/:id`           | Update (validates categoryId) |
+| `DELETE` | `/products/:id`           | Delete                        |
+
+### Orders
+
+| Method   | Endpoint      | What it does                   |
+| -------- | ------------- | ------------------------------ |
+| `GET`    | `/orders`     | List all                       |
+| `GET`    | `/orders/:id` | Get one                        |
+| `POST`   | `/orders`     | Create (total auto-calculated) |
+| `PUT`    | `/orders/:id` | Update (total recalculated)    |
+| `DELETE` | `/orders/:id` | Delete                         |
+
+---
+
+## The business rules I'm most proud of
+
+**🔐 Passwords never leak** — `.select("-password")` on every query, plus destructuring on create.
+
+**🧮 Server calculates the total** — the client sends products and quantities, the API looks up real prices and does the math. No way to cheat.
+
+**🔗 Data integrity everywhere** — try to create a product with a fake categoryId? 400. Order with a non-existent user? 400. Every reference is validated before saving.
+
+**📧 Duplicate emails handled gracefully** — MongoDB's error code `11000` gets caught and returns a clean `409 Conflict`.
+
+---
+
+## Quick test examples
+
+**Create a category:**
+
+```json
+POST /categories
+{ "name": "Electronics" }
+```
+
+**Create a user:**
+
+```json
+POST /users
+{ "name": "Henrique", "email": "henrique@test.com", "password": "123456" }
+```
+
+**Create a product** (use a real category `_id`):
+
+```json
+POST /products
+{ "name": "iPhone 15", "description": "Latest Apple smartphone", "price": 999, "categoryId": "CATEGORY_ID" }
+```
+
+**Create an order** (total is calculated for you):
+
+```json
+POST /orders
+{ "userId": "USER_ID", "products": [{ "productId": "PRODUCT_ID", "quantity": 2 }] }
+```
