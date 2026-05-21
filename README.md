@@ -4,6 +4,10 @@ This is a RESTful API I built for an online store, my solo backend project.
 
 It handles everything a basic eCommerce backend needs: users, categories, products, and orders. All with validation, data integrity checks, and auto-calculated order totals.
 
+<img width="1920" height="1688" alt="swaggerUI" src="https://github.com/user-attachments/assets/a16af9b7-668f-434b-adac-f220b6d362e5" />
+<img width="1562" height="975" alt="Postman" src="https://github.com/user-attachments/assets/fa24294f-8394-431b-ae78-de18bb2cf6f8" />
+<img width="273" height="456" alt="struc" src="https://github.com/user-attachments/assets/56640f74-b3db-4506-83cd-a70bd3f47b3d" />
+
 🔗 **live Project:** [Swagger UI on Render](https://ecommerce-api-s8fd.onrender.com/api-docs)
 
 ---
